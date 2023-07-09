@@ -5,6 +5,7 @@
 
 
 [![Video](video.jpeg)](https://drive.google.com/file/d/1uuqPFBThRFvOesasNQFG5qQHgnmtUdvG/view?usp=sharing)
+-------
 El cubo rubik es un famoso juguete que tiene mecánicas de juego muy interesantes a nivel de programación pues se tiene algo simple como lo es un cubo pero con transformaciones en cada una de sus caras. 
 
 Tener en cuenta que el proyecto solo tiene el proyecto con el codigo e imagenes y las librerias. No tiene las dependencias necesarias como glfw o glad. 
