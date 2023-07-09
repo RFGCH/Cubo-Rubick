@@ -19,9 +19,12 @@ Para mover la posición de la camara se usan z,s,x,c.
 
 Para mover la camara para la animación se usa b.
 
+Para quitar la animación de la cámara se usa v.
+
 Para desordenar el cubo se usa la j.
 
 Para solucionar el cubo se usa la m.
+
 
 ---
 
