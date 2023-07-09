@@ -23,6 +23,10 @@ Para mover la camara para la animación se usa b.
 
 Para quitar la animación de la cámara se usa v.
 
+Para hacer explotar el cubo se usa h.
+
+Para volver a armarlo se usa tambien la h.
+
 Para desordenar el cubo se usa la j.
 
 Para solucionar el cubo se usa la m.
