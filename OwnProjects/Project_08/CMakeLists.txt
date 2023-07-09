@@ -1,4 +1,4 @@
-project( Project_00_glfw )
+project( Project_08_glfw )
 
 message( "Configuring main application - ${PROJECT_NAME} : " )
 

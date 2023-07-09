@@ -82,11 +82,9 @@ bool firstMouse = true;
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
-
-matriz<float> T(Matriz_T<float>(0.0,0.0));
+//Multiplicador
+float MaximoTraslaccion = 3.0f;
 matriz<float> R(Matriz_R2<float>(0));
-matriz<float> S(Matriz_S<float>(0.1,0.1,0.1));
-matriz<float> TRS = (T*R*S);
 // ------------ Valores para el cuadrado ------
 //GL_RGBA means png
 void init(){
@@ -174,7 +172,6 @@ class Cubo
 private:
 	//Variables
 	unsigned int VAO,VBO,EBO,EBO_Lineas;
-	float anguloRotacion = 10.0f;
 	int Num_Puntos_Cuadrado = 24;
 	float x_,y_,z_;
 	float vertices[24*11] = { 
@@ -260,18 +257,20 @@ private:
 	}
 
 public:
-	void ImprimirVerticesNormal()
+	void ImprimirVertices()
 	{
-		for(int i = 0; i < 24*11; i+=11)
-		{
-			cout<<vertices[i]<<vertices[i+2]<<vertices[i+3]<<vertices[i+4]<<vertices[i+5]<<vertices[i+6]<<endl;
-		}
+			cout<<vertices[0]<<vertices[1]<<vertices[2]<<endl;
 	}
 	void set_S(float Escala){
 		Transformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_S<float>(Escala,Escala,Escala));
 		Transformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_S<float>(Escala,Escala,Escala));
 	}
-	void set_T(float x,float y,float z)
+	void set_Tras_Des(float x,float y,float z)
+	{
+		Destransformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_T<float>(x,y,z));
+		Destransformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_T<float>(x,y,z));
+	}
+	void set_Tras(float x,float y,float z)
 	{
 		Transformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_T<float>(x,y,z));
 		Transformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_T<float>(x,y,z));
@@ -305,42 +304,31 @@ public:
 	void Rotar(int Lado, float angulo)
 	{
 		Destransformar_Vertices(vertices,Num_Puntos_Cuadrado,R.valores);
-		
 		int inversa = Lado/9;
 		int signo = Lado%3;
 		Lado = Lado/3;
 		angulo = 90 / angulo;
-		
 		puntos_centrales();
 	
 		if (inversa == 0){
 			if (Lado == 0){
 				if(z_ < 0 && signo == 0||z_ == 0 && signo == 1 || z_ > 0 && signo == 2)
 				{
-					cout << endl;
-					for(int j = 0; j < 4; j++){
-						for(int i = 0; i < 6; i++){
-						cout << vertices[j*11+i]<<" ";
-						}
-						cout << endl;
-					}
-					cout << endl;
-					
 					Transformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_R3_Z<float>(angulo));
-					//Transformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_Z<float>(angulo));
+					Transformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_Z<float>(angulo));
 				}
 			}
 			if (Lado == 1)
 				if(y_ < 0 && signo == 0||y_ == 0 && signo == 1 || y_ > 0 && signo == 2)
 				{
 					Transformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_R3_Y<float>(angulo));
-					//Transformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_Y<float>(angulo));
+					Transformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_Y<float>(angulo));
 				}
 			if (Lado == 2)
 				if(x_ < 0 && signo == 0||x_ == 0 && signo == 1 || x_ > 0 && signo == 2)
 				{
 					Transformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_R3_X<float>(angulo));	
-					//Transformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_X<float>(angulo));
+					Transformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_X<float>(angulo));
 				}					
 		}
 		else{
@@ -348,19 +336,19 @@ public:
 				if(z_ < 0 && signo == 0||z_ == 0 && signo == 1 || z_ > 0 && signo == 2)
 				{
 					Destransformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_R3_Z<float>(angulo));
-					//Destransformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_Z<float>(angulo));
+					Destransformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_Z<float>(angulo));
 				}
 			if (Lado == 4)
 				if(y_ < 0 && signo == 0||y_ == 0 && signo == 1 || y_ > 0 && signo == 2)
 				{
 					Destransformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_R3_Y<float>(angulo));
-					//Destransformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_Y<float>(angulo));
+					Destransformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_Y<float>(angulo));
 				}
 			if (Lado == 5)
 				if(x_ < 0 && signo == 0||x_ == 0 && signo == 1 || x_ > 0 && signo == 2)
 				{
 					Destransformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_R3_X<float>(angulo));	
-					//Destransformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_X<float>(angulo));
+					Destransformar_Normal(vertices,Num_Puntos_Cuadrado,Matriz_R3_X<float>(angulo));
 				}
 		}
 
@@ -371,14 +359,13 @@ public:
 		//	Transformaciones de inicialización
 		Transformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_S<float>(0.1,0.1,0.1));
 		Transformar_Vertices(vertices,Num_Puntos_Cuadrado,Matriz_T<float>(x,y,z));
-		/*
-		matriz<float>Tras(Matriz_T<float>(3.0f,3.0f,0.0f));
-		matriz<float>RotarX(Matriz_R3_X<float>(30));
-		matriz<float>RotarY(Matriz_R3_Y<float>(30));
-		matriz<float>RotarZ(Matriz_R3_Z<float>(30));
-		R = Tras*RotarZ*RotarY*RotarX;
+		matriz<float>Tras(Matriz_T<float>(3.0f,3.0f,3.0f));
+		//matriz<float>RotarX(Matriz_R3_X<float>(30));
+		//matriz<float>RotarY(Matriz_R3_Y<float>(30));
+		//matriz<float>RotarZ(Matriz_R3_Z<float>(30));
+		//R = Tras*RotarZ*RotarY*RotarX;
+		R = Tras;
 		Transformar_Vertices(vertices,Num_Puntos_Cuadrado,R.valores);
-		*/
 		//	Inicializacion de los buffers
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
@@ -416,7 +403,7 @@ private:
 //Nota->Si escalo primero, tengo q trabajar con unidades mas pequeñas de traslaciones.
 	//float Radio = 1.5f; //Usar si primero traslado y luego escalo.
 	float Radio = 0.105f; //Usar si primero escalo y luego traslado.
-	float PosCAnimacion = 1.0f;
+	float PosCAnimacion = 0.105f*MaximoTraslaccion;
 	const static int Numero_Cubos = 27;
 	Cubo cubos[Numero_Cubos];
 	float Pos_Cubos[Numero_Cubos*3] = {
@@ -459,42 +446,43 @@ private:
 			 Radio, Radio, Radio //Z->25
 	};
 	float Pos_Cubos_Animacion[Numero_Cubos*3] = {
-		
-		-PosCAnimacion	, 0.0f			, 0.0f,
-		0.0f			, 0.0f			, 0.0f,
-		PosCAnimacion	, 0.0f			, 0.0f,
-		
-		-PosCAnimacion	, -PosCAnimacion, 0.0f,
-		0.0f			, -PosCAnimacion, 0.0f,
-		PosCAnimacion	, -PosCAnimacion, 0.0f,
-		
-		-PosCAnimacion	, PosCAnimacion	, 0.0f,
-		0.0f			, PosCAnimacion	, 0.0f,
-		PosCAnimacion	, PosCAnimacion	, 0.0f,
-		
-		-PosCAnimacion	, 0.0f			, -PosCAnimacion,
-		0.0f			, 0.0f			, -PosCAnimacion, 
-		PosCAnimacion	, 0.0f			, -PosCAnimacion,
-		
-		-PosCAnimacion	, -PosCAnimacion, -PosCAnimacion,
-		0.0f			, -PosCAnimacion, -PosCAnimacion,
-		PosCAnimacion	, -PosCAnimacion, -PosCAnimacion,
-		
-		-PosCAnimacion	, PosCAnimacion	, -PosCAnimacion,
-		0.0f			, PosCAnimacion	, -PosCAnimacion,
-		PosCAnimacion	, PosCAnimacion	, -PosCAnimacion,
-		
-		-PosCAnimacion	, 0.0f			, PosCAnimacion,
-		0.0f			, 0.0f			, PosCAnimacion, 
-		PosCAnimacion	, 0.0f			, PosCAnimacion,
-		
-		-PosCAnimacion	, -PosCAnimacion, PosCAnimacion,
-		0.0f			, -PosCAnimacion, PosCAnimacion,
-		PosCAnimacion	, -PosCAnimacion, PosCAnimacion,
-		
-		-PosCAnimacion	, PosCAnimacion	, PosCAnimacion,
-		0.0f			, PosCAnimacion	, PosCAnimacion,
-		PosCAnimacion	, PosCAnimacion	, PosCAnimacion
+			-PosCAnimacion, 0.0f, 0.0f,	//A->0  //Parte del centro 0->7
+			 0.0f, 0.0f, 0.0f,
+			 PosCAnimacion, 0.0f, 0.0f,	//B->1
+			 
+			-PosCAnimacion, -PosCAnimacion, 0.0f,	//C->2
+			 0.0f , -PosCAnimacion, 0.0f, //D->3
+			 PosCAnimacion, -PosCAnimacion, 0.0f, //E->4
+			 
+			-PosCAnimacion, PosCAnimacion, 0.0f,	//F->5
+			 0.0f,  PosCAnimacion, 0.0f,	//G->6
+			 PosCAnimacion, PosCAnimacion, 0.0f,  //H->7
+
+
+			-PosCAnimacion, 0.0f, -PosCAnimacion,	//I->8   //Parte de abajo 8->16
+			 0.0f , 0.0f, -PosCAnimacion,	//J->9
+			 PosCAnimacion, 0.0f, -PosCAnimacion,	//K->10
+			 
+			-PosCAnimacion, -PosCAnimacion, -PosCAnimacion, //L->11
+			 0.0f , -PosCAnimacion, -PosCAnimacion, //M->12
+			 PosCAnimacion, -PosCAnimacion, -PosCAnimacion, //N->13
+			 
+			-PosCAnimacion, PosCAnimacion, -PosCAnimacion,	//O->14
+			 0.0f , PosCAnimacion, -PosCAnimacion,	//P->15
+			 PosCAnimacion, PosCAnimacion, -PosCAnimacion, //Q->16
+				
+				
+			-PosCAnimacion, 0.0f, PosCAnimacion,	//R->17    //Parte de arriba 17->25
+			 0.0f , 0.0f, PosCAnimacion,	//S->18
+			 PosCAnimacion, 0.0f, PosCAnimacion,	//T->19
+			 
+			-PosCAnimacion, -PosCAnimacion, PosCAnimacion, //U->20
+			 0.0f , -PosCAnimacion, PosCAnimacion, //V->21
+			 PosCAnimacion, -PosCAnimacion, PosCAnimacion, //W->22
+			
+			-PosCAnimacion, PosCAnimacion, PosCAnimacion,	//X->23
+			 0.0f , PosCAnimacion, PosCAnimacion,	//Y->24
+			 PosCAnimacion, PosCAnimacion, PosCAnimacion //Z->25
 	};
 
 public:
@@ -503,15 +491,10 @@ public:
 		for(int i = 0; i < Numero_Cubos;i++)
 		{
 			cubos[i].Init(
-				Pos_Cubos_Animacion[i*3],
-				Pos_Cubos_Animacion[i*3+1],
-				Pos_Cubos_Animacion[i*3+2]);
+				Pos_Cubos[i*3],
+				Pos_Cubos[i*3+1],
+				Pos_Cubos[i*3+2]);
 		}
-	}
-	void ImprimirVerticesNormalRubik()
-	{
-		for(int i = 0; i < Numero_Cubos;i++)
-			cubos[i].ImprimirVerticesNormal();
 	}
 	void Draw()
 	{
@@ -522,6 +505,50 @@ public:
 	{
 		for(int i=0; i < Numero_Cubos; i++)
 			cubos[i].Rotar(Lado,Frame);
+		Draw();
+	}
+	void AnimacionTraslacion(bool flag,float trasla)
+	{ 
+		if(flag)
+		{
+			float x(0.0f),y(0.0f),z(0.0f);
+			for(int i=0;i < Numero_Cubos;i++)
+			{
+				if(Pos_Cubos[i*3] < 0.0f)
+					x = -trasla;
+				if(Pos_Cubos[i*3] > 0.0f)
+					x = trasla;
+				if(Pos_Cubos[i*3+1] < 0.0f)
+					y = -trasla;
+				if(Pos_Cubos[i*3+1] > 0.0f)
+					y = trasla;
+				if(Pos_Cubos[i*3+2] < 0.0f)
+					z = -trasla;
+				if(Pos_Cubos[i*3+2] > 0.0f)
+					z = trasla;
+				cubos[i].set_Tras(x,y,z);
+			}
+		}
+		else
+		{
+			float x(0.0f),y(0.0f),z(0.0f);
+			for(int i=0;i < Numero_Cubos;i++)
+			{
+				if(Pos_Cubos[i*3] < 0.0f)
+					x = -trasla;
+				if(Pos_Cubos[i*3] > 0.0f)
+					x = trasla;
+				if(Pos_Cubos[i*3+1] < 0.0f)
+					y = -trasla;
+				if(Pos_Cubos[i*3+1] > 0.0f)
+					y = trasla;
+				if(Pos_Cubos[i*3+2] < 0.0f)
+					z = -trasla;
+				if(Pos_Cubos[i*3+2] > 0.0f)
+					z = trasla;
+				cubos[i].set_Tras_Des(x,y,z);
+			}
+		}
 		Draw();
 	}
 };
@@ -542,7 +569,7 @@ void ColocarTextura()
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
 		// The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-	unsigned char *data = stbi_load("D:/usb/glfw-master/OwnProjects/Project_08/pelos.jpeg", &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load("D:/GraficaLab2/glfw-master/OwnProjects/Project_08/pelos.jpeg", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB , GL_UNSIGNED_BYTE, data); //Si se usa jpg
@@ -641,62 +668,11 @@ string Path_Solver(){
 	return output;
 }
 
-/*
-// Estructura para almacenar un punto en 3D
-struct Point3D {
-    double x, y, z;
-
-    Point3D(double x, double y, double z) : x(x), y(y), z(z) {}
-
-    void print() const {  // Aquí añadimos la palabra clave 'const'
-        std::cout << "(" << x << ", " << y << ", " << z << ")" << std::endl;
-    }
-};
-
-// Función para mover un punto a lo largo de una espiral de Fibonacci
-Point3D moveAlongFibonacciSpiral(Point3D start, double t) {
-    const double golden_ratio = (1.0 + std::sqrt(5.0)) / 2.0;
-    const double two_pi = 2.0 * M_PI;
-
-    // El radio es la distancia del punto inicial al origen
-    double r = std::sqrt(start.x * start.x + start.y * start.y) * (1 - t);
-
-    // El ángulo cambia con base en la proporción áurea y el tiempo t
-    double theta = two_pi * golden_ratio * t * 2; // 2 para dos vueltas
-
-    // Calculamos las nuevas coordenadas x e y
-    double x = r * std::cos(theta);
-    double y = r * std::sin(theta);
-
-    // Devolvemos el nuevo punto (mantenemos constante la coordenada z)
-    return Point3D(x, y, start.z);
-}
-*/
-
 // lighting
 glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
+bool flagcamera = false;
 int main()
 {
-/*
-	// Creamos el punto de partida (1, 0, 0)
-    Point3D start(1.0, 0.0, 0.0);
-
-    // Definimos el número de puntos que queremos obtener
-    int numPoints = 100;
-
-    // Generamos y almacenamos los puntos en un vector
-    std::vector<Point3D> points;
-    for(int i = 0; i <= numPoints; ++i) {
-        double t = static_cast<double>(i) / numPoints;
-        Point3D point = moveAlongFibonacciSpiral(start, t);
-        points.push_back(point);
-    }
-
-    // Imprimimos los puntos
-    for(const auto& point : points) {
-        point.print();
-    }
-*/	
 	
 	//Probando
 	srand(time(NULL));
@@ -710,20 +686,17 @@ int main()
 	//Cubo Sala;
 	
 	//Textura
-	Shader ourShader("D:/usb/glfw-master/OwnProjects/Project_08/VertexShader.vs", "D:/usb/glfw-master/OwnProjects/Project_08/FragmentShader.fs");
-	Shader sol("D:/usb/glfw-master/OwnProjects/Project_08/LuzVertexShader.vs","D:/usb/glfw-master/OwnProjects/Project_08/LuzFragmentShader.fs");
+	Shader ourShader("D:/GraficaLab2/glfw-master/OwnProjects/Project_08/VertexShader.vs", "D:/GraficaLab2/glfw-master/OwnProjects/Project_08/FragmentShader.fs");
+	Shader sol("D:/GraficaLab2/glfw-master/OwnProjects/Project_08/LuzVertexShader.vs","D:/GraficaLab2/glfw-master/OwnProjects/Project_08/LuzFragmentShader.fs");
 	ColocarTextura();
-	ourShader.use(); 
-	//Sala.Init(0,0,0);
-	//Sala.set_S(100);
-	
+	ourShader.use();
 	//Luz
 	ourShader.setVec3("lightColor",  1.0f, 1.0f, 0.5f);
     ourShader.setVec3("lightPos", lightPos);
-	//glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);	
     ourShader.setMat4("projection", projection);
-	
+	        // camera/view transformation
+
 	//view->lookat
 	//projection->perspective
 	
@@ -731,18 +704,17 @@ int main()
 	sol.use();
 	Luz.InitLuz();
 	Luz.set_S(0.2f);
-	Luz.set_T(0.0f,0.0f,0.0f);
 	sol.setMat4("projection", projection);
-		
-		
 		
 	//Cubo
 	glLineWidth(3.0);
 	int key = -1;
-	int animacion_en_curso = -1;
 	int frame = 100;
-	int animacion_inicial = 1;
-	
+	int animacion_en_curso = -1;
+	int animacionExplota = 1;
+	int animacionRegreso = 1;
+	float animacionTrasla = 0.05;
+	bool traslafinal = false;
     while (!glfwWindowShouldClose(window))
     { // per-frame time logic
         // --------------------
@@ -756,9 +728,18 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		ourShader.use();
-		
-        glm::mat4 view = camera.GetViewMatrix();
-        ourShader.setMat4("view", view);
+		glm::mat4 view = camera.GetViewMatrix();
+		ourShader.setMat4("view", view);
+		if(flagcamera == true)
+		{	
+			glm::mat4 view = glm::mat4(1.0f);
+			float radius = 7.0f;
+			float camX = static_cast<float>(sin(glfwGetTime()) * radius);
+			float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
+			float camY = static_cast<float>(cos(glfwGetTime()) * radius);
+			view = glm::lookAt(glm::vec3(camX,camY, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			ourShader.setMat4("view", view);
+		}
 		ourShader.setVec3("viewPos", camera.Position);
 		if(animacion_en_curso == -1){
 			veintiseislados.Draw();
@@ -783,7 +764,8 @@ int main()
 				camino += numero_simbolo(solver_path);
 				key = 18;
 			}
-			if(key == 18)				
+			if(key == 18)
+			{				
 				if(!solver_path.empty())
 				{
 					key = Movimiento_Solver[solver_path.substr(0,2)];
@@ -795,18 +777,31 @@ int main()
 						solver_path = solver_path.substr(2);
 					}
 				}
+			}
+			if(key == 20)
+			{
+				_sleep(10);
+				if(animacionExplota != 100)
+				{
+					veintiseislados.AnimacionTraslacion(true,animacionTrasla);
+					animacionExplota++;
+				}
+				if(animacionExplota == 100 && animacionRegreso != 100)
+				{
+					veintiseislados.AnimacionTraslacion(false,animacionTrasla);
+					animacionRegreso++;
+				}
+			}
 			veintiseislados.MoverCamada(key,frame);
-			if (++animacion_en_curso == frame) {
+			if (++animacion_en_curso == frame)
+			{
 				animacion_en_curso = -1;
 				if (solver_path.size()!=0){
 					key = 18;
 					animacion_en_curso = 0;
 				}
 			}
-
 		}
-		//veintiseislados.ImprimirVerticesNormalRubik();	
-		//Sala.Draw();
 		sol.use();
 		sol.setMat4("view", view);
 		Luz.Draw();
@@ -859,6 +854,8 @@ int keyboard_callback(GLFWwindow* window)
 		return 18;
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
 		return 19;
+	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
+		return 20;
 	return -1;
 }
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -867,15 +864,21 @@ void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+if(flagcamera == false)
+{
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+	if(glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+		flagcamera = true;
+	if(glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+		flagcamera = false;
 }
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
@@ -891,22 +894,25 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
+	if(flagcamera == false)
+	{
+		float xpos = static_cast<float>(xposIn);
+		float ypos = static_cast<float>(yposIn);
 
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
+		if (firstMouse)
+		{
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-    lastX = xpos;
-    lastY = ypos;
-    camera.ProcessMouseMovement(xoffset, yoffset);
+		lastX = xpos;
+		lastY = ypos;
+		camera.ProcessMouseMovement(xoffset, yoffset);
+	}
 }
 
 /*void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)

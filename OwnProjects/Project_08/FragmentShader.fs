@@ -25,11 +25,8 @@ uniform sampler2D texture1;
 
 void main()
 {
-	//FragColor = vec4(ourColor, 1.0f); //Solo colores
-	//FragColor = texture(texture1, TexCoord); //Solo la textura
-	//FragColor = texture(texture1, TexCoord) * vec4(ourColor*lightColor, 1.0); //Tutorial1 ilumacion
 	// ambient -> Funciona bien
-    float ambientStrength = 0.1;
+    float ambientStrength = 0.4;
     vec3 ambient = ambientStrength * lightColor;
   	
     // diffuse 
@@ -44,7 +41,6 @@ void main()
     vec3 reflectDir = reflect(-lightDir, norm);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
     vec3 specular = specularStrength * spec * lightColor;  
-    //vec3 result = (ambient + diffuse + specular) * ourColor;
-	vec3 result = (ambient + diffuse + specular)*ourColor;
+    vec3 result = (ambient + diffuse + specular) * ourColor;
     FragColor = texture(texture1, TexCoord)*vec4(result, 1.0);
 }
