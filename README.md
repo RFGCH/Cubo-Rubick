@@ -9,10 +9,15 @@ El cubo rubik es un famoso juguete que tiene mecánicas de juego muy interesante
 # Instrucciones
 
 Para mover el cubo se usan los numeros del 1 al 9.
+
 Para mover los inversos de las camadas se usa del "q" al "o".
+
 Para mover la posición de la camara se usan z,s,x,c.
+
 Para mover la camara para la animación se usa b.
+
 Para desordenar el cubo se usa la j.
+
 Para solucionar el cubo se usa la m.
 
 ---
