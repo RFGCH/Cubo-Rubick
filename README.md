@@ -1,7 +1,7 @@
 # Cubo-Rubick
 ![Cubo_img](cubo.jpeg)
 ---
-[![Video](https://www.youtube.com/watch?v=eKL3TceSxvk_ID/0.jpg)](https://www.youtube.com/watch?v=eKL3TceSxvk)
+[![Video](https://drive.google.com/file/d/1XAdZAK_bJ7s7pZvT-5C_51ORpmCoQRx5/view?usp=sharing_ID/0.jpg)](https://drive.google.com/file/d/1XAdZAK_bJ7s7pZvT-5C_51ORpmCoQRx5/view?usp=sharing)
 
 El cubo rubik es un famoso juguete que tiene mecánicas de juego muy interesantes a nivel de programación pues se tiene algo simple como lo es un cubo pero con transformaciones en cada una de sus caras. 
 
